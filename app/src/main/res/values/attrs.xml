@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="TimeLineView">
+        <attr name="TimeLineView_timeScaleColor" format="color" />
+        <attr name="TimeLineView_timeScaleSideColor" format="color" />
+        <attr name="TimeLineView_scaleLineColor" format="color" />
+        <attr name="TimeLineView_timeScaleLineLength" format="float" />
+        <attr name="TimeLineView_timeLineLineLength" format="float" />
+        <attr name="TimeLineView_timeScaleTextColor" format="color" />
+        <attr name="TimeLineView_timeLineLineColor" format="color" />
+        <attr name="TimeLineView_timeLineTriangleColor" format="color" />
+    </declare-styleable>
+
+</resources>
