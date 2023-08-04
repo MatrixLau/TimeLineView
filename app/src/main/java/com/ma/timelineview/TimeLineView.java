@@ -360,6 +360,10 @@ public class TimeLineView extends View {
         this.colorArr = colorArr;
         invalidate();
     }
+
+    public void setTimeLineData(TimeLineData timeLineData) {
+        this.timeLineData = timeLineData;
+    }
 }
 
 class TimeLineData {
