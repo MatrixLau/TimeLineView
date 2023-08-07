@@ -5,11 +5,15 @@
         <attr name="TimeLineView_timeScaleColor" format="color" />
         <attr name="TimeLineView_timeScaleSideColor" format="color" />
         <attr name="TimeLineView_scaleLineColor" format="color" />
-        <attr name="TimeLineView_timeScaleLineLength" format="float" />
-        <attr name="TimeLineView_timeLineLineLength" format="float" />
+        <attr name="TimeLineView_timeScaleLineLength" format="dimension" />
+        <attr name="TimeLineView_timeLineLineLength" format="dimension" />
         <attr name="TimeLineView_timeScaleTextColor" format="color" />
         <attr name="TimeLineView_timeLineLineColor" format="color" />
         <attr name="TimeLineView_timeLineTriangleColor" format="color" />
+        <attr name="TimeLineView_timeLineMode" format="enum">
+            <enum name="showing" value="1" />
+            <enum name="selecting" value="2" />
+        </attr>
     </declare-styleable>
 
 </resources>

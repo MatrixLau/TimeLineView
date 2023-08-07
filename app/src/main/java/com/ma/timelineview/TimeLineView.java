@@ -8,6 +8,7 @@ import android.graphics.Path;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -29,8 +30,8 @@ public class TimeLineView extends View {
     int timeScaleSideColor = 0xff000000;
     int scaleLineColor = 0xffffffff;
     float scaleGap;
-    float timeScaleLineLength = 20f;
-    float timeLineLineLength = 35f;
+    float timeScaleLineLength = getDp(8);
+    float timeLineLineLength = getDp(12);
     int timeScaleTextColor = 0xffffffff;
     int timeLineLineColor = 0xffffffff;
     int timeLineTriangleColor = 0xffC00000;
@@ -51,7 +52,7 @@ public class TimeLineView extends View {
      * 1 - 展示 此时与时间刻度有白色间隔
      * 2 - 指定 此时有红色箭头指示当前时间段在时间线的位置
      */
-    int timeLineMode = 2;
+    int timeLineMode = 1;
     /**
      * 当前时间段
      * 当timeLineMode为2时用到
@@ -74,11 +75,15 @@ public class TimeLineView extends View {
         timeScaleColor = typedArray.getColor(R.styleable.TimeLineView_TimeLineView_timeScaleColor, timeScaleColor);
         timeScaleSideColor = typedArray.getColor(R.styleable.TimeLineView_TimeLineView_timeScaleSideColor, timeScaleSideColor);
         scaleLineColor = typedArray.getColor(R.styleable.TimeLineView_TimeLineView_scaleLineColor, scaleLineColor);
-        timeScaleLineLength = typedArray.getFloat(R.styleable.TimeLineView_TimeLineView_timeScaleLineLength, timeScaleLineLength);
-        timeLineLineLength = typedArray.getFloat(R.styleable.TimeLineView_TimeLineView_timeLineLineLength, timeLineLineLength);
+        timeScaleLineLength = typedArray.getDimension(R.styleable.TimeLineView_TimeLineView_timeScaleLineLength, timeScaleLineLength);
+        timeLineLineLength = typedArray.getDimension(R.styleable.TimeLineView_TimeLineView_timeLineLineLength, timeLineLineLength);
         timeScaleTextColor = typedArray.getColor(R.styleable.TimeLineView_TimeLineView_timeScaleTextColor, timeScaleTextColor);
         timeLineLineColor = typedArray.getColor(R.styleable.TimeLineView_TimeLineView_timeLineLineColor, timeLineLineColor);
         timeLineTriangleColor = typedArray.getColor(R.styleable.TimeLineView_TimeLineView_timeLineTriangleColor, timeLineTriangleColor);
+        timeLineMode = typedArray.getInt(R.styleable.TimeLineView_TimeLineView_timeLineMode, timeLineMode);
+
+        typedArray.recycle();
+
         init();
     }
 
@@ -363,6 +368,25 @@ public class TimeLineView extends View {
 
     public void setTimeLineData(TimeLineData timeLineData) {
         this.timeLineData = timeLineData;
+    }
+
+    public int getTimeLineMode() {
+        return timeLineMode;
+    }
+
+    public void setTimeLineMode(int timeLineMode) {
+        this.timeLineMode = timeLineMode;
+        invalidate();
+    }
+
+    /**
+     * 获取统一化像素大小
+     *
+     * @param dp 传入的值
+     * @return 转化成统一标准的值
+     */
+    public float getDp(int dp) {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, getResources().getDisplayMetrics());
     }
 }
 
