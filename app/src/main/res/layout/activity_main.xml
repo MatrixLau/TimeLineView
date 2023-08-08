@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/purple_200"
     tools:context=".MainActivity">
 
     <com.ma.timelineview.TimeLineView
@@ -11,7 +12,7 @@
         android:layout_width="80dp"
         android:layout_height="match_parent"
         android:layout_alignParentStart="true"
-        app:TimeLineView_timeLineMode="selecting" />
+        app:TimeLineView_timeLineMode="showing" />
 
     <Button
         android:id="@+id/button"
@@ -19,6 +20,15 @@
         android:layout_height="wrap_content"
         android:text="Click to MOVE"
         android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true"/>
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:id="@+id/modeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="270dp"
+        android:text="Click to SWITCH" />
 
 </RelativeLayout>

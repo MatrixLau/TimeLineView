@@ -206,8 +206,33 @@ public class TimeLineView extends View {
         float endPos = 0f;
 
         if (timeLineMode == 1) {
-            //画时间线背景面板
-            canvas.drawRect(1f * getWidth() / 2f, startHour * scaleGap + scaleGap * (startMin / 60f), getWidth(), endHour * scaleGap + scaleGap * (endMin / 60f), timeLineBackgroundPanelPaint);
+
+//            if (endHour > startHour) {
+//                //画时间线背景面板
+//                canvas.drawRect(1f * getWidth() / 2f, startHour * scaleGap + scaleGap * (startMin / 60f), getWidth(), endHour * scaleGap + scaleGap * (endMin / 60f), timeLineBackgroundPanelPaint);
+//
+//                //画时间段
+//                if (timeLineData.getData().size() > 1) {
+//                    for (int i = 0; i < timeLineData.getData().size() - 1; i++) {
+//                        int colorIndex = i;
+//                        while (colorIndex >= colorArr.length) colorIndex -= colorArr.length;
+//
+//                        timeSectionPaint.setColor(colorArr[colorIndex]);
+//
+//                        int sectionHour = Integer.parseInt(timeLineData.getData().get(i).getHour());
+//                        int sectionMin = Integer.parseInt(timeLineData.getData().get(i).getMin());
+//                        int nextSectionHour = Integer.parseInt(timeLineData.getData().get(i + 1).getHour());
+//                        int nextSectionMin = Integer.parseInt(timeLineData.getData().get(i + 1).getMin());
+//                        //画出时间段方块
+//                        canvas.drawRect(3f * getWidth() / 4f, sectionHour * scaleGap + scaleGap * (sectionMin / 60f), getWidth(), nextSectionHour * scaleGap + scaleGap * (nextSectionMin / 60f), timeSectionPaint);
+//                        //画出时间段数字标记
+//                        float textHeight = scaleTextPaint.getFontSpacing() * 0.3f;
+//                        float textWidth = scaleTextPaint.measureText(String.valueOf(i)) * 0.5f;
+//                        float sectionDiffHeight = ((nextSectionHour * scaleGap + scaleGap * (nextSectionMin / 60f)) - (sectionHour * scaleGap + scaleGap * (sectionMin / 60f))) * 0.5f;
+//                        canvas.drawText(String.valueOf(i), 7f * getWidth() / 8f - textWidth, (sectionHour * scaleGap + scaleGap * (sectionMin / 60f)) + sectionDiffHeight + textHeight, scaleTextPaint);
+//                    }
+//                }
+//            }
 
             //画时间段
             if (timeLineData.getData().size() > 1) {
@@ -221,13 +246,54 @@ public class TimeLineView extends View {
                     int sectionMin = Integer.parseInt(timeLineData.getData().get(i).getMin());
                     int nextSectionHour = Integer.parseInt(timeLineData.getData().get(i + 1).getHour());
                     int nextSectionMin = Integer.parseInt(timeLineData.getData().get(i + 1).getMin());
-                    //画出时间段方块
-                    canvas.drawRect(3f * getWidth() / 4f, sectionHour * scaleGap + scaleGap * (sectionMin / 60f), getWidth(), nextSectionHour * scaleGap + scaleGap * (nextSectionMin / 60f), timeSectionPaint);
-                    //画出时间段数字标记
-                    float textHeight = scaleTextPaint.getFontSpacing() * 0.3f;
-                    float textWidth = scaleTextPaint.measureText(String.valueOf(i)) * 0.5f;
-                    float sectionDiffHeight = ((nextSectionHour * scaleGap + scaleGap * (nextSectionMin / 60f)) - (sectionHour * scaleGap + scaleGap * (sectionMin / 60f))) * 0.5f;
-                    canvas.drawText(String.valueOf(i), 7f * getWidth() / 8f - textWidth, (sectionHour * scaleGap + scaleGap * (sectionMin / 60f)) + sectionDiffHeight + textHeight, scaleTextPaint);
+
+                    if (nextSectionHour >= sectionHour) {   //当天
+                        //画时间线背景面板
+                        canvas.drawRect(1f * getWidth() / 2f, sectionHour * scaleGap + scaleGap * (sectionMin / 60f), getWidth(), nextSectionHour * scaleGap + scaleGap * (nextSectionMin / 60f), timeLineBackgroundPanelPaint);
+                        //画出时间段方块
+                        canvas.drawRect(3f * getWidth() / 4f, sectionHour * scaleGap + scaleGap * (sectionMin / 60f), getWidth(), nextSectionHour * scaleGap + scaleGap * (nextSectionMin / 60f), timeSectionPaint);
+                        //画出各时间段开始线
+                        canvas.drawLine(1f * getWidth() / 2f, sectionHour * scaleGap + scaleGap * (sectionMin / 60f), getWidth(), sectionHour * scaleGap + scaleGap * (sectionMin / 60f), timeLineSwitchLinePaint);
+                        //画出时间段数字标记
+                        float textHeight = scaleTextPaint.getFontSpacing() * 0.3f;
+                        float textWidth = scaleTextPaint.measureText(String.valueOf(i + 1)) * 0.5f;
+                        float sectionDiffHeight = ((nextSectionHour * scaleGap + scaleGap * (nextSectionMin / 60f)) - (sectionHour * scaleGap + scaleGap * (sectionMin / 60f))) * 0.5f;
+                        canvas.drawText(String.valueOf(i + 1), 7f * getWidth() / 8f - textWidth, (sectionHour * scaleGap + scaleGap * (sectionMin / 60f)) + sectionDiffHeight + textHeight, scaleTextPaint);
+
+                    } else {   //隔天
+                        //画时间线背景面板
+                        canvas.drawRect(1f * getWidth() / 2f, sectionHour * scaleGap + scaleGap * (sectionMin / 60f), getWidth(), 24 * scaleGap, timeLineBackgroundPanelPaint);
+                        //先画当天的时间段
+                        canvas.drawRect(3f * getWidth() / 4f, sectionHour * scaleGap + scaleGap * (sectionMin / 60f), getWidth(), 24 * scaleGap, timeSectionPaint);
+
+                        //画时间线背景面板
+                        canvas.drawRect(1f * getWidth() / 2f, 0, getWidth(), nextSectionHour * scaleGap + scaleGap * (nextSectionMin / 60f), timeLineBackgroundPanelPaint);
+                        //再画出跨天的时间段
+                        canvas.drawRect(3f * getWidth() / 4f, 0, getWidth(), nextSectionHour * scaleGap + scaleGap * (nextSectionMin / 60f), timeSectionPaint);
+                        //画出各时间段开始线   与当天一致
+                        canvas.drawLine(1f * getWidth() / 2f, sectionHour * scaleGap + scaleGap * (sectionMin / 60f), getWidth(), sectionHour * scaleGap + scaleGap * (sectionMin / 60f), timeLineSwitchLinePaint);
+                        float textHeight = scaleTextPaint.getFontSpacing() * 0.3f;
+                        float textWidth = scaleTextPaint.measureText(String.valueOf(i + 1)) * 0.5f;
+                        float sectionInTodayHeight = (24 * scaleGap) - (sectionHour * scaleGap + scaleGap * (sectionMin / 60f));
+                        float sectionInNextDayHeight = nextSectionHour * scaleGap + scaleGap * (nextSectionMin / 60f);
+                        float sectionHalfHeight = (sectionInTodayHeight + sectionInNextDayHeight) * 0.5f;
+                        //画出时间段数字标记
+                        if (((sectionHour * scaleGap + scaleGap * (sectionMin / 60f)) + sectionHalfHeight + textHeight) < getHeight()) {
+                            //若时间段中间在当天且够文本高度
+                            canvas.drawText(String.valueOf(i + 1), 7f * getWidth() / 8f - textWidth, (sectionHour * scaleGap + scaleGap * (sectionMin / 60f)) + sectionHalfHeight + textHeight, scaleTextPaint);
+
+                        } else if ((sectionHalfHeight - sectionInTodayHeight) > textHeight) {
+                            //若时间段中间在隔天且够文本高度
+                            canvas.drawText(String.valueOf(i + 1), 7f * getWidth() / 8f - textWidth, (sectionHalfHeight - sectionInTodayHeight) + textHeight, scaleTextPaint);
+
+                        } else {
+                            //若都不够位置 两边都显示
+                            canvas.drawText(String.valueOf(i + 1), 7f * getWidth() / 8f - textWidth, (sectionHour * scaleGap + scaleGap * (sectionMin / 60f)) + sectionInTodayHeight * 0.5f + textHeight, scaleTextPaint);
+                            canvas.drawText(String.valueOf(i + 1), 7f * getWidth() / 8f - textWidth, sectionInNextDayHeight * 0.5f + textHeight, scaleTextPaint);
+
+                        }
+                    }
+
                 }
             }
 
@@ -245,7 +311,7 @@ public class TimeLineView extends View {
                     int nextSectionHour = Integer.parseInt(timeLineData.getData().get(i + 1).getHour());
                     int nextSectionMin = Integer.parseInt(timeLineData.getData().get(i + 1).getMin());
 
-                    if (nextSectionHour > sectionHour) {   //当天
+                    if (nextSectionHour >= sectionHour) {   //当天
                         //画出时间段方块
                         canvas.drawRect(1f * getWidth() / 2f, sectionHour * scaleGap + scaleGap * (sectionMin / 60f), 3f * getWidth() / 4f, nextSectionHour * scaleGap + scaleGap * (nextSectionMin / 60f), timeSectionPaint);
                         //画出各时间段开始线
@@ -256,7 +322,7 @@ public class TimeLineView extends View {
                         float sectionDiffHeight = ((nextSectionHour * scaleGap + scaleGap * (nextSectionMin / 60f)) - (sectionHour * scaleGap + scaleGap * (sectionMin / 60f))) * 0.5f;
                         canvas.drawText(String.valueOf(i + 1), 5f * getWidth() / 8f - textWidth, (sectionHour * scaleGap + scaleGap * (sectionMin / 60f)) + sectionDiffHeight + textHeight, scaleTextPaint);
 
-                        //画出当前时间段指示表
+                        //画出当前时间段指示标
                         if (currentTimeSection == i + 1) {
                             //先清除之前的Path
                             timeLineTrianglePath.reset();
@@ -282,7 +348,7 @@ public class TimeLineView extends View {
                         if (((sectionHour * scaleGap + scaleGap * (sectionMin / 60f)) + sectionHalfHeight + textHeight) < getHeight()) {
                             //若时间段中间在当天且够文本高度
                             canvas.drawText(String.valueOf(i + 1), 5f * getWidth() / 8f - textWidth, (sectionHour * scaleGap + scaleGap * (sectionMin / 60f)) + sectionHalfHeight + textHeight, scaleTextPaint);
-                            //画出当前时间段指示表
+                            //画出当前时间段指示标
                             if (currentTimeSection == i + 1) {
                                 //先清除之前的Path
                                 timeLineTrianglePath.reset();
@@ -295,7 +361,7 @@ public class TimeLineView extends View {
                         } else if ((sectionHalfHeight - sectionInTodayHeight) > textHeight) {
                             //若时间段中间在隔天且够文本高度
                             canvas.drawText(String.valueOf(i + 1), 5f * getWidth() / 8f - textWidth, (sectionHalfHeight - sectionInTodayHeight) + textHeight, scaleTextPaint);
-                            //画出当前时间段指示表
+                            //画出当前时间段指示标
                             if (currentTimeSection == i + 1) {
                                 //先清除之前的Path
                                 timeLineTrianglePath.reset();
@@ -335,7 +401,7 @@ public class TimeLineView extends View {
         float signTextHeight = timeLineSwitchTextPaint.getFontSpacing() * 0.3f;
 
         //画时间线开指示
-//        canvas.drawLine(1f * getWidth() / 2f - timeLineLineLength, startHour * scaleGap + scaleGap * (startMin / 60f), timeLineMode==1 ? getWidth() : 3f * getWidth() / 4f, startHour * scaleGap + scaleGap * (startMin / 60f), timeLineSwitchLinePaint);
+        canvas.drawLine(1f * getWidth() / 2f - timeLineLineLength, startHour * scaleGap + scaleGap * (startMin / 60f), timeLineMode == 1 ? getWidth() : 3f * getWidth() / 4f, startHour * scaleGap + scaleGap * (startMin / 60f), timeLineSwitchLinePaint);
         canvas.drawText("ON", 0 + 18f, startHour * scaleGap + scaleGap * (startMin / 60f) + signTextHeight, timeLineSwitchTextPaint);
 
         //画时间线关指示
@@ -404,10 +470,10 @@ class TimeLineData {
 //            add(new TimeLineSection("21", "00"));
 //            add(new TimeLineSection("22", "00"));
             add(new TimeLineSection("22", "30"));
-//            add(new TimeLineSection("1", "00"));
+            add(new TimeLineSection("1", "00"));
             add(new TimeLineSection("1", "30"));
             add(new TimeLineSection("2", "00"));
-            add(new TimeLineSection("4", "30"));
+//            add(new TimeLineSection("4", "30"));
 
         }
     };

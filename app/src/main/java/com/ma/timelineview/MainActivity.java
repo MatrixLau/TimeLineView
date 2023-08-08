@@ -1,11 +1,11 @@
 package com.ma.timelineview;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -27,6 +27,14 @@ public class MainActivity extends AppCompatActivity {
                 else count++;
                 timeLineView.setCurrentTimeSection(count);
                 Log.i(TAG, "onClick: setCurrentTimeSection=" + count);
+            }
+        });
+
+        Button modeButton = findViewById(R.id.modeButton);
+        modeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                timeLineView.setTimeLineMode(timeLineView.getTimeLineMode() == 1 ? 2 : 1);
             }
         });
     }
