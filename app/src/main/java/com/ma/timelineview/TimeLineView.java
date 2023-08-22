@@ -9,6 +9,7 @@ import android.graphics.Typeface;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.MotionEvent;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -17,33 +18,33 @@ import java.util.ArrayList;
 
 public class TimeLineView extends View {
 
-    String TAG = getClass().getSimpleName();
+    private String TAG = getClass().getSimpleName();
 
-    Paint timeScalePaint, timeScaleSidePaint, scaleLinePaint, scaleTextPaint,
+    private Paint timeScalePaint, timeScaleSidePaint, scaleLinePaint, scaleTextPaint,
             timeLineSwitchLinePaint, timeLineSwitchTextPaint, timeLineBackgroundPanelPaint, timeSectionPaint,
             timeLineTrianglePaint;
 //    Rect textMeasureRect;
 
-    Path timeLineTrianglePath;
+    private Path timeLineTrianglePath;
 
-    int timeScaleColor = 0xff242847;
-    int timeScaleSideColor = 0xff000000;
-    int scaleLineColor = 0xffffffff;
-    float scaleGap;
-    float timeScaleLineLength = getDp(8);
-    float timeLineLineLength = getDp(12);
-    int timeScaleTextColor = 0xffffffff;
-    int timeLineLineColor = 0xffffffff;
-    int timeLineTriangleColor = 0xffC00000;
+    private int timeScaleColor = 0xff242847;
+    private int timeScaleSideColor = 0xff000000;
+    private int scaleLineColor = 0xffffffff;
+    private float scaleGap;
+    private float timeScaleLineLength = getDp(8);
+    private float timeLineLineLength = getDp(12);
+    private int timeScaleTextColor = 0xffffffff;
+    private int timeLineLineColor = 0xffffffff;
+    private int timeLineTriangleColor = 0xffC00000;
     /**
      * 时间段颜色数组
      * 会循环使用
      */
-    int[] colorArr = {
+    private int[] colorArr = {
             0xff1B2782, 0xff114773, 0xff1D6B33, 0xff8FA135,
             0xff9E5437, 0xff8A5115, 0xff801787,
     };
-//    int[] colorArr = {
+//    private int[] colorArr = {
 //            0xffDFFF00, 0xffFFBF00, 0xffFF7F50, 0xffDE3163,
 //            0xff9FE2BF, 0xff40E0D0, 0xff6495ED, 0xffCCCCFF,
 //    };
@@ -52,15 +53,19 @@ public class TimeLineView extends View {
      * 1 - 展示 此时与时间刻度有白色间隔
      * 2 - 指定 此时有红色箭头指示当前时间段在时间线的位置
      */
-    int timeLineMode = 1;
+    private int timeLineMode = 1;
     /**
      * 当前时间段
      * 当timeLineMode为2时用到
      * 从1开始，不要输入0！
      */
-    int currentTimeSection = 1;
+    private int currentTimeSection = 1;
 
-    TimeLineData timeLineData = new TimeLineData();
+    //时间线数据
+    private TimeLineData timeLineData = new TimeLineData();
+    //时间线分段Y轴数据
+    private ArrayList<Float> timeLineYData = new ArrayList<>();
+    private boolean isClickOnSection = false;
 
     public TimeLineView(Context context) {
         super(context);
@@ -168,6 +173,9 @@ public class TimeLineView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
+        //清空Y数据
+        timeLineYData.clear();
+
         //画左边时间刻度
         canvas.drawRect(0f, 0f, 3f * getWidth() / 4f, getHeight(), timeScalePaint);
         //画左边时间刻度旁黑色道
@@ -193,7 +201,7 @@ public class TimeLineView extends View {
         int endHour = Integer.parseInt(timeLineData.getData().get(timeLineData.getData().size() - 1).getHour());
         int endMin = Integer.parseInt(timeLineData.getData().get(timeLineData.getData().size() - 1).getMin());
 
-        Log.i(TAG, "onDraw: timeLineData" + timeLineData.getData());
+//        Log.i(TAG, "onDraw: timeLineData" + timeLineData.getData());
 
 //        //测试定义的数据
 //        int startHour = 9;
@@ -259,7 +267,6 @@ public class TimeLineView extends View {
                         float textWidth = scaleTextPaint.measureText(String.valueOf(i + 1)) * 0.5f;
                         float sectionDiffHeight = ((nextSectionHour * scaleGap + scaleGap * (nextSectionMin / 60f)) - (sectionHour * scaleGap + scaleGap * (sectionMin / 60f))) * 0.5f;
                         canvas.drawText(String.valueOf(i + 1), 7f * getWidth() / 8f - textWidth, (sectionHour * scaleGap + scaleGap * (sectionMin / 60f)) + sectionDiffHeight + textHeight, scaleTextPaint);
-
                     } else {   //隔天
                         //画时间线背景面板
                         canvas.drawRect(1f * getWidth() / 2f, sectionHour * scaleGap + scaleGap * (sectionMin / 60f), getWidth(), 24 * scaleGap, timeLineBackgroundPanelPaint);
@@ -293,7 +300,6 @@ public class TimeLineView extends View {
 
                         }
                     }
-
                 }
             }
 
@@ -393,7 +399,8 @@ public class TimeLineView extends View {
                             }
                         }
                     }
-
+                    //记录开始线Y数据
+                    timeLineYData.add(sectionHour * scaleGap + scaleGap * (sectionMin / 60f));
                 }
             }
         }
@@ -408,6 +415,8 @@ public class TimeLineView extends View {
         canvas.drawLine(1f * getWidth() / 2f - timeLineLineLength, endHour * scaleGap + scaleGap * (endMin / 60f), timeLineMode == 1 ? getWidth() : 3f * getWidth() / 4f, endHour * scaleGap + scaleGap * (endMin / 60f), timeLineSwitchLinePaint);
         canvas.drawText("OFF", 0 + 18f, endHour * scaleGap + scaleGap * (endMin / 60f) + signTextHeight, timeLineSwitchTextPaint);
 
+        //记录结束线Y数据
+        timeLineYData.add(endHour * scaleGap + scaleGap * (endMin / 60f) + signTextHeight);
     }
 
     public int getCurrentTimeSection() {
@@ -445,6 +454,10 @@ public class TimeLineView extends View {
         invalidate();
     }
 
+    public boolean isClickOnSection() {
+        return isClickOnSection;
+    }
+
     /**
      * 获取统一化像素大小
      *
@@ -453,6 +466,41 @@ public class TimeLineView extends View {
      */
     public float getDp(int dp) {
         return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, getResources().getDisplayMetrics());
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                isClickOnSection = false;
+                if (timeLineMode == 2) {
+                    //命中时间段区域
+                    if (event.getX(0) >= 1f * getWidth() / 2f && event.getX(0) <= 3f * getWidth() / 4f) {
+                        //判断时间段index
+                        for (int i = 0; i < timeLineYData.size() - 1; i++) {
+                            //当天数据
+                            if (timeLineYData.get(i) < timeLineYData.get(i + 1)) {
+                                if (event.getY(0) >= timeLineYData.get(i) && event.getY(0) <= timeLineYData.get(i + 1)) {
+                                    Log.e(TAG, "onTouchEvent: click section - " + String.valueOf(i + 1));
+                                    isClickOnSection = true;
+                                    currentTimeSection = i + 1;
+                                    invalidate();
+                                }
+                            } else {  //隔天数据
+                                if ((event.getY(0) >= timeLineYData.get(i) && event.getY(0) <= getHeight())
+                                        || (event.getY(0) >= 0 && event.getY(0) <= timeLineYData.get(i + 1))) {
+                                    Log.e(TAG, "onTouchEvent: click section - " + String.valueOf(i + 1));
+                                    isClickOnSection = true;
+                                    currentTimeSection = i + 1;
+                                    invalidate();
+                                }
+                            }
+                        }
+                    }
+                }
+                break;
+        }
+        return false;
     }
 }
 
