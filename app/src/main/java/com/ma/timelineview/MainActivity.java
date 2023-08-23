@@ -37,5 +37,21 @@ public class MainActivity extends AppCompatActivity {
                 timeLineView.setTimeLineMode(timeLineView.getTimeLineMode() == 1 ? 2 : 1);
             }
         });
+
+        timeLineView.setSectionClickListener(new TimeLineView.onSectionClickListener() {
+            @Override
+            public void onClick(boolean isClickOnSection, int sectionIndex) {
+                if (isClickOnSection) {
+                    Log.e(TAG, "onClick: click on section - " + sectionIndex);
+                    Log.e(TAG, "onClick: click on section - " + timeLineView.getTimeLineData().getData().get(sectionIndex - 1) + " to " + timeLineView.getTimeLineData().getData().get(sectionIndex));
+                } else {
+                    if (timeLineView.getTimeLineMode() != 2) {
+                        Log.e(TAG, "onClick: not in mode 2");
+                    } else {
+                        Log.e(TAG, "onClick: missing click !");
+                    }
+                }
+            }
+        });
     }
 }

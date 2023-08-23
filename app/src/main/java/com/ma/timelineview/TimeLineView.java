@@ -66,6 +66,7 @@ public class TimeLineView extends View {
     //时间线分段Y轴数据
     private ArrayList<Float> timeLineYData = new ArrayList<>();
     private boolean isClickOnSection = false;
+    private onSectionClickListener sectionClickListener;
 
     public TimeLineView(Context context) {
         super(context);
@@ -458,14 +459,8 @@ public class TimeLineView extends View {
         return isClickOnSection;
     }
 
-    /**
-     * 获取统一化像素大小
-     *
-     * @param dp 传入的值
-     * @return 转化成统一标准的值
-     */
-    public float getDp(int dp) {
-        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, getResources().getDisplayMetrics());
+    public void setSectionClickListener(onSectionClickListener sectionClickListener) {
+        this.sectionClickListener = sectionClickListener;
     }
 
     @Override
@@ -484,6 +479,7 @@ public class TimeLineView extends View {
                                     Log.e(TAG, "onTouchEvent: click section - " + String.valueOf(i + 1));
                                     isClickOnSection = true;
                                     currentTimeSection = i + 1;
+                                    sectionClickListener.onClick(true, i + 1);
                                     invalidate();
                                 }
                             } else {  //隔天数据
@@ -492,15 +488,38 @@ public class TimeLineView extends View {
                                     Log.e(TAG, "onTouchEvent: click section - " + String.valueOf(i + 1));
                                     isClickOnSection = true;
                                     currentTimeSection = i + 1;
+                                    sectionClickListener.onClick(true, i + 1);
                                     invalidate();
                                 }
                             }
                         }
+                    } else {
+                        sectionClickListener.onClick(false, -1);
                     }
                 }
                 break;
         }
         return false;
+    }
+
+    /**
+     * 获取统一化像素大小
+     *
+     * @param dp 传入的值
+     * @return 转化成统一标准的值
+     */
+    public float getDp(int dp) {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, getResources().getDisplayMetrics());
+    }
+
+    public static interface onSectionClickListener {
+        /**
+         * 点击事件
+         *
+         * @param isClickOnSection 是否点击中时间段区域
+         * @param sectionIndex     若点击中则返回时间段序号 否则返回-1
+         */
+        public void onClick(boolean isClickOnSection, int sectionIndex);
     }
 }
 
