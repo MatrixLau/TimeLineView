@@ -589,9 +589,6 @@ class TimeLineSection {
 
     @Override
     public String toString() {
-        return "timeLineSection{" +
-                "hour='" + hour + '\'' +
-                ", min='" + min + '\'' +
-                '}';
+        return hour + ":" + min;
     }
 }

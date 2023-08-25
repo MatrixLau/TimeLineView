@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -44,12 +45,9 @@ public class MainActivity extends AppCompatActivity {
                 if (isClickOnSection) {
                     Log.e(TAG, "onClick: click on section - " + sectionIndex);
                     Log.e(TAG, "onClick: click on section - " + timeLineView.getTimeLineData().getData().get(sectionIndex - 1) + " to " + timeLineView.getTimeLineData().getData().get(sectionIndex));
+                    Toast.makeText(MainActivity.this, "Click on section: " + timeLineView.getTimeLineData().getData().get(sectionIndex - 1) + " - " + timeLineView.getTimeLineData().getData().get(sectionIndex), Toast.LENGTH_SHORT).show();
                 } else {
-                    if (timeLineView.getTimeLineMode() != 2) {
-                        Log.e(TAG, "onClick: not in mode 2");
-                    } else {
-                        Log.e(TAG, "onClick: missing click !");
-                    }
+                    Log.e(TAG, "onClick: missing click !");
                 }
             }
         });
