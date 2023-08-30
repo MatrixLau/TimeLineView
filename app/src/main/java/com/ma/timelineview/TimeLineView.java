@@ -30,7 +30,7 @@ public class TimeLineView extends View {
     private int timeScaleColor = 0xff242847;
     private int timeScaleSideColor = 0xff000000;
     private int scaleLineColor = 0xffffffff;
-    private float scaleGap;
+    private float scaleGap = 0f;
     private float timeScaleLineLength = getDp(8);
     private float timeLineLineLength = getDp(12);
     private int timeScaleTextColor = 0xffffffff;
@@ -66,7 +66,7 @@ public class TimeLineView extends View {
     //时间线分段Y轴数据
     private ArrayList<Float> timeLineYData = new ArrayList<>();
     private boolean isClickOnSection = false;
-    private onSectionClickListener sectionClickListener;
+    private onSectionClickListener sectionClickListener = null;
 
     public TimeLineView(Context context) {
         super(context);
@@ -479,7 +479,8 @@ public class TimeLineView extends View {
                                     Log.e(TAG, "onTouchEvent: click section - " + String.valueOf(i + 1));
                                     isClickOnSection = true;
                                     currentTimeSection = i + 1;
-                                    sectionClickListener.onClick(true, i + 1);
+                                    if (sectionClickListener != null)
+                                        sectionClickListener.onClick(true, i + 1);
                                     invalidate();
                                 }
                             } else {  //隔天数据
@@ -488,13 +489,14 @@ public class TimeLineView extends View {
                                     Log.e(TAG, "onTouchEvent: click section - " + String.valueOf(i + 1));
                                     isClickOnSection = true;
                                     currentTimeSection = i + 1;
-                                    sectionClickListener.onClick(true, i + 1);
+                                    if (sectionClickListener != null)
+                                        sectionClickListener.onClick(true, i + 1);
                                     invalidate();
                                 }
                             }
                         }
                     } else {
-                        sectionClickListener.onClick(false, -1);
+                        if (sectionClickListener != null) sectionClickListener.onClick(false, -1);
                     }
                 }
                 break;
